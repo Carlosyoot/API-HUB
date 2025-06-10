@@ -1,0 +1,12 @@
+{
+  "voors": {
+    "nome": "Assistente VOORS",
+    "objetivo": "Apresentar as funcionalidades e padrões do modelo VOORS, focado em soluções prontas para uso.",
+    "total_de_atualizacoes": 12
+  },
+  "personalizada": {
+    "nome": "Assistente de Modelo Personalizado",
+    "objetivo": "Ajudar você a configurar e criar um modelo de chat totalmente customizado para suas necessidades.",
+    "total_de_atualizacoes": 3
+  }
+}

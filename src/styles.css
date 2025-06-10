@@ -1,0 +1,151 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden; /* Impede o scroll na página inteira */
+    background-color: #f0f2f5;
+}
+
+/* Container principal da aplicação */
+#app-container {
+    display: flex; /* Habilita o Flexbox */
+    height: 100vh; /* Ocupa 100% da altura da tela */
+}
+
+/* 1. Barra Lateral */
+#sidebar {
+    width: 220px;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 20px;
+    flex-shrink: 0; /* Impede que a barra lateral encolha */
+}
+
+#sidebar h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.model-list {
+    list-style: none;
+}
+
+.model-list li {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.model-list li:hover {
+    background-color: #34495e;
+}
+
+.model-list li.active {
+    background-color: #3498db;
+    font-weight: bold;
+}
+
+#chat-container {
+    flex-grow: 1; /* Faz o chat ocupar todo o espaço restante */
+    display: flex;
+    flex-direction: column; /* Organiza os itens verticalmente */
+    height: 100vh; /* Ocupa toda a altura disponível */
+    background-color: #ffffff;
+}
+
+#chat-messages {
+    flex-grow: 1;           /* Permite que esta área cresça e ocupe o espaço vazio */
+    overflow-y: auto;       /* Adiciona o scroll VERTICAL apenas quando o conteúdo ultrapassar a altura */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espaçamento entre as mensagens */
+}
+
+.bot-message {
+    background-color: #e5e5ea;
+    padding: 15px;
+    border-radius: 18px 18px 18px 0; /* Formato de balão */
+    max-width: 70%;
+    align-self: flex-start; /* Alinha à esquerda */
+    line-height: 1.5;
+}
+
+#chat-input-area {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+}
+
+#message-input {
+    flex-grow: 1; /* Ocupa o espaço restante */
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-right: 10px;
+    outline: none;
+    font-size: 1rem;
+}
+
+#message-input:focus{
+    outline: none;
+    border-color: gray;
+}
+
+#send-button {
+    padding: 12px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+#send-button:hover {
+    background-color: #0056b3;
+}
+
+.user-message {
+    background-color: #007bff; /* Cor azul para a mensagem enviada */
+    color: white;
+    padding: 15px;
+    border-radius: 18px 18px 0 18px; /* Formato de balão invertido */
+    max-width: 70%;
+    align-self: flex-end; /* <<< ESSENCIAL: Alinha a mensagem à direita */
+    line-height: 1.5;
+}
+
+
+/* Estilização da Barra de Rolagem (Scrollbar) */
+
+/* A barra de rolagem inteira */
+::-webkit-scrollbar {
+  width: 8px; /* Largura da barra */
+}
+
+/* O fundo (a "pista" onde a barra desliza) */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Cor de fundo da pista */
+  border-radius: 10px;
+}
+
+/* O indicador que desliza (a própria barra) */
+::-webkit-scrollbar-thumb {
+  background: #888; /* Cor da barra */
+  border-radius: 10px;
+}
+
+/* A barra ao passar o mouse por cima */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Cor da barra ao passar o mouse */
+}
