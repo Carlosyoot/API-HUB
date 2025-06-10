@@ -2,19 +2,21 @@
 
 window.addEventListener('DOMContentLoaded', () => {
     // --- 1. Seleção dos Elementos do DOM ---
-    // Pegamos todos os elementos que vamos manipular para fácil acesso.
+    const appContainer = document.getElementById('app-container');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const newChatButton = document.getElementById('new-chat-btn');
     const sidebarModels = document.querySelectorAll('.model-list li');
     const messagesContainer = document.getElementById('chat-messages');
     const messageInput = document.getElementById('message-input');
     const sendButton = document.getElementById('send-button');
     
-    let currentModel = 'voors'; // Guarda o modelo que está ativo no momento.
+    // ALTERADO: Carrega o último modelo ativo do localStorage, ou usa 'voors' como padrão.
+    let currentModel = localStorage.getItem('activeModel') || 'voors';
 
     // --- 2. Funções de Exibição de Mensagens ---
 
     /**
      * Função para rolar o chat para a última mensagem.
-     * É uma boa prática para garantir que a mensagem mais recente esteja sempre visível.
      */
     function scrollToBottom() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -25,11 +27,12 @@ window.addEventListener('DOMContentLoaded', () => {
      * @param {string} htmlMessage - A mensagem a ser exibida, pode conter HTML.
      */
     function displayBotMessage(htmlMessage) {
+        // A lógica original desta função está perfeita, sem alterações.
         const messageElement = document.createElement('div');
         messageElement.classList.add('bot-message');
         messageElement.innerHTML = htmlMessage;
         messagesContainer.appendChild(messageElement);
-        scrollToBottom(); // Rola para o final após adicionar a mensagem.
+        scrollToBottom();
     }
 
     /**
@@ -37,11 +40,12 @@ window.addEventListener('DOMContentLoaded', () => {
      * @param {string} textMessage - A mensagem de texto a ser exibida.
      */
     function displayUserMessage(textMessage) {
+        // A lógica original desta função está perfeita, sem alterações.
         const messageElement = document.createElement('div');
         messageElement.classList.add('user-message');
-        messageElement.textContent = textMessage; // Usamos textContent para segurança.
+        messageElement.textContent = textMessage;
         messagesContainer.appendChild(messageElement);
-        scrollToBottom(); // Rola para o final.
+        scrollToBottom();
     }
 
     // --- 3. Lógica do Chat ---
@@ -51,15 +55,18 @@ window.addEventListener('DOMContentLoaded', () => {
      * @param {string} modelName - O nome do modelo ('voors' ou 'personalizada').
      */
     async function loadBotIntroduction(modelName) {
-        currentModel = modelName; // Atualiza o modelo atual.
-        messagesContainer.innerHTML = ''; // Limpa o chat antes de carregar o novo conteúdo.
+        currentModel = modelName;
+        
+        // ALTERADO: Lógica para limpar apenas as mensagens, preservando outros elementos.
+        const messagesToRemove = messagesContainer.querySelectorAll('.bot-message, .user-message');
+        messagesToRemove.forEach(message => message.remove());
 
         try {
             const response = await fetch('./models/models.json');
             if (!response.ok) throw new Error('Falha ao carregar JSON');
             
             const data = await response.json();
-            const modelData = data[modelName]; // Acessa os dados do modelo específico.
+            const modelData = data[modelName];
 
             const welcomeMessage = `
                 Olá! Eu sou o <strong>${modelData.nome}</strong>.<br>
@@ -78,9 +85,8 @@ window.addEventListener('DOMContentLoaded', () => {
      * @param {string} userInput - O texto enviado pelo usuário.
      */
     function getSimulatedBotResponse(userInput) {
+        // A lógica original desta função está perfeita, sem alterações.
         const lowerCaseInput = userInput.toLowerCase();
-
-        // Adiciona um pequeno "delay" para simular que o bot está "pensando".
         setTimeout(() => {
             if (lowerCaseInput.includes('olá') || lowerCaseInput.includes('oi')) {
                 displayBotMessage('Olá! Como posso ajudar você hoje?');
@@ -91,42 +97,54 @@ window.addEventListener('DOMContentLoaded', () => {
             } else {
                 displayBotMessage('Entendido. Eu ainda sou um bot em desenvolvimento, mas anotei sua mensagem: "' + userInput + '".');
             }
-        }, 800); // Atraso de 800 milissegundos (0.8 segundos).
+        }, 800);
     }
     
     /**
      * Função que lida com o envio de uma mensagem pelo usuário.
      */
     function handleSendMessage() {
-        const messageText = messageInput.value.trim(); // Pega o texto e remove espaços extras.
-        
+        // A lógica original desta função está perfeita, sem alterações.
+        const messageText = messageInput.value.trim();
         if (messageText !== '') {
-            displayUserMessage(messageText);    // Mostra a mensagem do usuário na tela.
-            messageInput.value = '';            // Limpa o campo de input.
-            messageInput.focus();               // Devolve o foco para o campo de input.
-            getSimulatedBotResponse(messageText); // Pede uma resposta simulada do bot.
+            displayUserMessage(messageText);
+            messageInput.value = '';
+            messageInput.focus();
+            getSimulatedBotResponse(messageText);
         }
     }
 
     // --- 4. Configuração dos Event Listeners (Ouvintes de Eventos) ---
 
-    // Adiciona o evento de clique para os botões da barra lateral.
+    // NOVO: Evento para o botão que abre/fecha a sidebar.
+    sidebarToggle.addEventListener('click', () => {
+        appContainer.classList.toggle('sidebar-collapsed');
+    });
+
+    // NOVO: Evento para o botão de "Novo Chat".
+    newChatButton.addEventListener('click', () => {
+        // Apenas recarrega a introdução do modelo que já está ativo.
+        loadBotIntroduction(currentModel);
+    });
+
+    // Evento de clique para os botões da barra lateral.
     sidebarModels.forEach(li => {
         li.addEventListener('click', () => {
-            // Remove a classe 'active' de todos os itens.
             sidebarModels.forEach(item => item.classList.remove('active'));
-            // Adiciona a classe 'active' apenas no item clicado.
             li.classList.add('active');
-            // Carrega a introdução do modelo correspondente ao 'data-model'.
+
             const modelName = li.getAttribute('data-model');
+            // NOVO: Salva a escolha do modelo no localStorage para persistência.
+            localStorage.setItem('activeModel', modelName);
+            
             loadBotIntroduction(modelName);
         });
     });
 
-    // Adiciona o evento de clique para o botão de enviar.
+    // Evento de clique para o botão de enviar.
     sendButton.addEventListener('click', handleSendMessage);
     
-    // Adiciona o evento de "Enter" no campo de input para enviar a mensagem.
+    // Evento de "Enter" no campo de input para enviar a mensagem.
     messageInput.addEventListener('keyup', (event) => {
         if (event.key === 'Enter') {
             handleSendMessage();
@@ -134,6 +152,14 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- 5. Inicialização ---
-    // Carrega a introdução do modelo padrão ('voors') quando a aplicação inicia.
+
+    // NOVO: Garante que o item correto da sidebar esteja marcado como 'active' ao iniciar.
+    const activeModelLi = document.querySelector(`.model-list li[data-model="${currentModel}"]`);
+    if (activeModelLi) {
+        sidebarModels.forEach(item => item.classList.remove('active'));
+        activeModelLi.classList.add('active');
+    }
+
+    // Carrega a introdução do modelo (seja o padrão ou o salvo).
     loadBotIntroduction(currentModel);
 });
